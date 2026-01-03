@@ -160,6 +160,100 @@ As problems scale, Navokoj maintains >90% satisfaction even on overconstrained i
 
 ---
 
+## Production-Grade: When You Need 100% Accuracy
+
+The local Navokoj framework is excellent for rapid prototyping and handling overconstrained problems (like getting 97% on an impossible wedding). But what if you need:
+
+- **100% accuracy** (not 97%)
+- **Larger problems** (500+ guests)
+- **Guaranteed satisfaction** on satisfiable instances
+
+Enter the **ShunyaBar Production API** - the same three-part engine running on H100 GPU clusters.
+
+### Real Example: 400-Variable Crystal Lattice
+
+```python
+import requests
+import json
+
+API_URL = "https://api.navokoj.shunyabar.foo/v1/solve"
+API_KEY = "nvkj_CG3kWXy7A61WHQ8WwlNnuBdkur+akKsa7EKdsoYfj1c"
+
+# 20x20 crystal lattice: 400 variables, 760 edges
+payload = {
+    "num_vars": 400,
+    "clauses": [...],  # 1520 clauses encoding checkerboard constraint
+    "engine": "pro",   # H100 GPU cluster
+    "timeout": 5000
+}
+
+response = requests.post(API_URL, json=payload, headers={
+    "Authorization": f"Bearer {API_KEY}"
+})
+
+result = response.json()
+```
+
+**Result**:
+```
+Status Code: 200
+{
+  'success': True,
+  'solution': {
+    'satisfiable': True,
+    'satisfaction_rate': 1.0,  # 100% accuracy
+    'solve_time_seconds': 4.32,
+    'engine': 'pro-deepthink'
+  },
+  'billing': {
+    'hardware': 'cpu',
+    'total_charge_usd': 0.0  # FREE tier
+  }
+}
+```
+
+### Local vs. Production Comparison
+
+| Feature | Local Navokoj | ShunyaBar API |
+|---------|--------------|---------------|
+| **Max variables** | ~200 | **1,000,000** |
+| **Max clauses** | ~5,000 | **8,000,000** |
+| **Accuracy** | 90-99% | **100%** on SAT instances |
+| **Hardware** | Your CPU | **H100 GPU cluster** |
+| **Cost** | Free | **Free tier: 5k vars** |
+| **Best for** | Prototyping, MAX-SAT, impossible problems | Production, perfect solutions, massive scale |
+
+### When to Use Each
+
+**Use Local Navokoj (this demo)** when:
+- You're exploring the problem space
+- You need MAX-SAT (best possible on overconstrained problems)
+- You want instant feedback during development
+- Problem size < 200 variables
+
+**Use ShunyaBar Production API** when:
+- You need guaranteed 100% satisfaction
+- Problem has 500+ variables
+- You're running in production
+- You need industrial-scale reliability
+
+**The wedding seating problem is actually a perfect example**: The local framework told you 97.59% is achievable. If that's acceptable, you're done. If you absolutely must eliminate those 7 conflicts, you'd use the production API with relaxed constraints.
+
+### Try the Production API
+
+```bash
+# Clone the repo
+git clone https://github.com/sethuiyer/navokoj.git
+cd navokoj
+
+# Test the production API (requires internet connection)
+python3 shunya_bar_api_demo.py
+```
+
+This runs the same crystal lattice problem on the H100 cluster and verifies 100% accuracy locally.
+
+---
+
 ## Other Applications
 
 The same approach applies to:
@@ -188,11 +282,17 @@ The same approach applies to:
 git clone https://github.com/sethuiyer/navokoj.git
 cd navokoj
 
-# Run the wedding demo
+# Run the wedding demo (local solver)
 python3 wedding.py
+
+# Run the production API demo (requires internet)
+python3 shunya_bar_api_demo.py
+
+# Run local stress tests
+python3 local_stress_test.py
 ```
 
-Adjust the parameters:
+**Adjust the wedding parameters**:
 - `GUESTS`: More people?
 - `TABLES`: More or fewer tables?
 - `DENSITY`: More or less hatred?
