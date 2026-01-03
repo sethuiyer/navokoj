@@ -1,0 +1,10 @@
+include LICENSE
+include README.md
+include MANIFOLD_IMPLEMENTATION.md
+include NAVOKOJ_FRAMEWORK.md
+include PUBLISHING_GUIDE.md
+include YOUR_NEXT_STEP.md
+include requirements.txt
+recursive-include navokoj *.py
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
