@@ -7,9 +7,10 @@ This tutorial demonstrates how to solve graph coloring problems using the Navoko
 1. [Overview](#overview)
 2. [Installation](#installation)
 3. [Basic Usage](#basic-usage)
-4. [Visualization](#visualization)
-5. [Verification](#verification)
-6. [Performance Analysis](#performance-analysis)
+4. [Custom Graph Input](#custom-graph-input)
+5. [Visualization](#visualization)
+6. [Verification](#verification)
+7. [Performance Analysis](#performance-analysis)
 
 ---
 
@@ -59,6 +60,247 @@ print(f"Assignment: {color_assignment}")
 ```
 Colors used: 3 out of 3
 Assignment: [1, 2, 3, 2, 1, 3, 2, 1, 3, 2]
+```
+
+---
+
+## Custom Graph Input
+
+The solver accepts edge constraints as a list of tuples. Here are several ways to provide custom graphs.
+
+### Method 1: Edge List (Direct Input)
+
+```python
+from navokoj import solve_qstate
+
+# Define edges directly (1-indexed)
+constraints = [
+    (1, 2), (1, 3), (1, 4),  # Node 1 connected to 2, 3, 4
+    (2, 3), (2, 5),          # Node 2 connected to 3, 5
+    (3, 4), (3, 5),          # Node 3 connected to 4, 5
+    (4, 5),                   # Node 4 connected to 5
+]
+
+n_nodes = 5
+n_colors = 3
+
+solution = solve_qstate(n_nodes, n_colors, constraints)
+print(solution)  # [1, 2, 3, 2, 1]
+```
+
+### Method 2: Adjacency Matrix
+
+```python
+from navokoj import solve_qstate
+import numpy as np
+
+# Adjacency matrix (5x5 example)
+adj_matrix = np.array([
+    [0, 1, 1, 1, 0],  # Node 1
+    [1, 0, 1, 0, 1],  # Node 2
+    [1, 1, 0, 1, 1],  # Node 3
+    [1, 0, 1, 0, 1],  # Node 4
+    [0, 1, 1, 1, 0],  # Node 5
+])
+
+# Convert to edge list
+constraints = []
+n_nodes = adj_matrix.shape[0]
+for i in range(n_nodes):
+    for j in range(i+1, n_nodes):
+        if adj_matrix[i, j] == 1:
+            constraints.append((i+1, j+1))  # 1-indexed
+
+solution = solve_qstate(n_nodes, 3, constraints)
+```
+
+### Method 3: Adjacency Dictionary
+
+```python
+from navokoj import solve_qstate
+
+# Node -> neighbors mapping (1-indexed)
+adj_dict = {
+    1: [2, 3, 4],
+    2: [1, 3, 5],
+    3: [1, 2, 4, 5],
+    4: [1, 3, 5],
+    5: [2, 3, 4],
+}
+
+# Convert to edge list
+constraints = []
+for node, neighbors in adj_dict.items():
+    for neighbor in neighbors:
+        if node < neighbor:  # Avoid duplicates
+            constraints.append((node, neighbor))
+
+solution = solve_qstate(5, 3, constraints)
+```
+
+### Method 4: NetworkX Graphs
+
+```python
+from navokoj import solve_qstate
+import networkx as nx
+
+# Create NetworkX graph
+G = nx.Graph()
+G.add_edges_from([
+    (1, 2), (1, 3), (1, 4),
+    (2, 3), (2, 5),
+    (3, 4), (3, 5),
+    (4, 5),
+])
+
+# Extract edge list
+constraints = list(G.edges())
+
+solution = solve_qstate(len(G.nodes()), 3, constraints)
+```
+
+### Method 5: File Input (CSV)
+
+**graph.csv:**
+```csv
+source,target
+1,2
+1,3
+1,4
+2,3
+2,5
+3,4
+3,5
+4,5
+```
+
+```python
+from navokoj import solve_qstate
+import pandas as pd
+
+# Read CSV
+df = pd.read_csv('graph.csv')
+
+# Convert to edge list
+constraints = [(row['source'], row['target']) for _, row in df.iterrows()]
+n_nodes = max(df['source'].max(), df['target'].max())
+
+solution = solve_qstate(n_nodes, 3, constraints)
+```
+
+### Method 6: File Input (JSON)
+
+**graph.json:**
+```json
+{
+  "nodes": [1, 2, 3, 4, 5],
+  "edges": [
+    {"source": 1, "target": 2},
+    {"source": 1, "target": 3},
+    {"source": 1, "target": 4},
+    {"source": 2, "target": 3},
+    {"source": 2, "target": 5},
+    {"source": 3, "target": 4},
+    {"source": 3, "target": 5},
+    {"source": 4, "target": 5}
+  ]
+}
+```
+
+```python
+from navokoj import solve_qstate
+import json
+
+# Read JSON
+with open('graph.json') as f:
+    data = json.load(f)
+
+# Extract edges
+constraints = [(e['source'], e['target']) for e in data['edges']]
+n_nodes = len(data['nodes'])
+
+solution = solve_qstate(n_nodes, 3, constraints)
+```
+
+### Method 7: Edge List File
+
+**graph.edgelist:**
+```
+1 2
+1 3
+1 4
+2 3
+2 5
+3 4
+3 5
+4 5
+```
+
+```python
+from navokoj import solve_qstate
+import networkx as nx
+
+# Read edge list file
+G = nx.read_edgelist('graph.edgelist', nodetype=int, data=False)
+constraints = [(int(u), int(v)) for u, v in G.edges()]
+
+solution = solve_qstate(len(G.nodes()), 3, constraints)
+```
+
+### Helper Function
+
+A utility function to handle multiple input formats:
+
+```python
+from navokoj import solve_qstate
+import networkx as nx
+import numpy as np
+from typing import Union, List, Tuple, Dict
+
+def to_edge_list(graph) -> List[Tuple[int, int]]:
+    """
+    Convert various graph formats to edge list.
+
+    Accepts:
+    - List of tuples (already edge list)
+    - NumPy adjacency matrix
+    - NetworkX graph
+    - Adjacency dictionary
+    """
+    # Already edge list
+    if isinstance(graph, list) and len(graph) > 0:
+        return graph
+
+    # NetworkX graph
+    if isinstance(graph, nx.Graph):
+        return list(graph.edges())
+
+    # Adjacency matrix
+    if isinstance(graph, np.ndarray):
+        constraints = []
+        n = graph.shape[0]
+        for i in range(n):
+            for j in range(i+1, n):
+                if graph[i, j] != 0:
+                    constraints.append((i+1, j+1))
+        return constraints
+
+    # Adjacency dictionary
+    if isinstance(graph, dict):
+        constraints = []
+        for node, neighbors in graph.items():
+            for neighbor in neighbors:
+                if node < neighbor:
+                    constraints.append((node, neighbor))
+        return constraints
+
+    raise ValueError(f"Unsupported graph type: {type(graph)}")
+
+# Usage
+adj_matrix = np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]])
+constraints = to_edge_list(adj_matrix)
+
+solution = solve_qstate(3, 2, constraints)
 ```
 
 ---
