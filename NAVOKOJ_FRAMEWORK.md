@@ -291,7 +291,7 @@ This is **meta-algorithmic thinking**, not just another solver.
 
 ---
 
-*Status: Research Preview*  
-*Version: 0.1 (Python Prototype)*  
-*Author: Unknown Genius*  
-*Warning: Not production-ready. Use for research, not deployment.*
+*Status: Research Preview*
+*Version: 0.1 (Python Prototype)*
+*Author: Sethu Iyer (sethuiyer95@gmail.com)*
+*Note: This is a research prototype. For production workloads, use the ShunyaBar API at https://navokoj.shunyabar.foo/*
