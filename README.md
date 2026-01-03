@@ -74,14 +74,19 @@ result = response.json()
 
 | Feature | Open Source (this repo) | ShunyaBar API |
 |---------|------------------------|---------------|
-| **400-var crystal lattice** | FAIL (9.4s) | **100% (4.3s)** |
+| **400-var crystal lattice** | FAIL (9.4s) | **100% (4.3s, CPU)** |
 | **Max variables** | ~200 | **1,000,000** |
 | **Max clauses** | ~5,000 | **8,000,000** |
 | **Accuracy on SAT** | 90-99% | **100%** |
-| **Hardware** | Your CPU (Python) | **H100 GPU cluster (optimized)** |
+| **Hardware** | Your CPU (Python) | **CPU → L4 → H100 (auto-scaled)** |
 | **Code optimization** | Python loops | **C++/Rust core** |
 | **Cost** | Free | **Free tier: 5k vars** |
 | **Best for** | Prototyping, research, MAX-SAT | Production, perfect solutions |
+
+**Hardware Auto-Scaling** (ShunyaBar API):
+- **Small problems** (<5k vars): CPU instances (fast, low latency)
+- **Medium problems** (5k-100k vars): L4 GPU cluster (balanced performance)
+- **Large problems** (100k-1M vars): H100 GPU cluster (maximum throughput)
 
 ### What This Means
 

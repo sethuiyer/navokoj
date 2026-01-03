@@ -219,9 +219,14 @@ Status Code: 200
 | **Max variables** | ~200 | **1,000,000** |
 | **Max clauses** | ~5,000 | **8,000,000** |
 | **Accuracy** | 90-99% | **100%** on SAT instances |
-| **Hardware** | Your CPU | **H100 GPU cluster** |
+| **Hardware** | Your CPU (Python) | **CPU → L4 → H100 (auto-scaled)** |
 | **Cost** | Free | **Free tier: 5k vars** |
 | **Best for** | Prototyping, MAX-SAT, impossible problems | Production, perfect solutions, massive scale |
+
+**Hardware Auto-Scaling** (ShunyaBar API):
+- **Small problems** (<5k vars): CPU instances (fast, low latency)
+- **Medium problems** (5k-100k vars): L4 GPU cluster (balanced performance)
+- **Large problems** (100k-1M vars): H100 GPU cluster (maximum throughput)
 
 ### When to Use Each
 
