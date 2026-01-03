@@ -88,7 +88,7 @@ constraints = generate_q_graph(n_nodes, density=density)
 print(f"\nSolving {n_colors}-coloring problem...")
 color_assignment = solve_qstate(n_nodes, n_colors, constraints, steps=2000)
 
-print(f"\n✅ Solution found!")
+print(f"\nSUCCESS: Solution found!")
 print(f"Color assignment: {color_assignment}")
 print(f"Number of colors used: {len(set(color_assignment))}")
 ```
@@ -99,7 +99,7 @@ Generating graph with 10 nodes and density=0.3...
 
 Solving 3-coloring problem...
 
-✅ Solution found!
+SUCCESS: Solution found!
 Color assignment: [1, 2, 3, 2, 1, 3, 2, 1, 3, 2]
 Number of colors used: 3
 ```
@@ -131,7 +131,7 @@ def visualize_graph_coloring(n_nodes, n_colors, density, seed=42):
     np.random.seed(seed)
 
     # Generate graph
-    print(f"🔨 Generating graph: {n_nodes} nodes, density={density}")
+    print(f"Generating Generating graph: {n_nodes} nodes, density={density}")
     constraints = generate_q_graph(n_nodes, density=density)
 
     # Create NetworkX graph for visualization
@@ -143,7 +143,7 @@ def visualize_graph_coloring(n_nodes, n_colors, density, seed=42):
         G.add_edge(u-1, v-1)
 
     # Solve coloring problem
-    print(f"🎨 Solving {n_colors}-coloring problem...")
+    print(f"Solving Solving {n_colors}-coloring problem...")
     color_assignment = solve_qstate(n_nodes, n_colors, constraints, steps=2000)
 
     # Verify solution
@@ -193,22 +193,81 @@ def visualize_graph_coloring(n_nodes, n_colors, density, seed=42):
 
     # Print results
     print(f"\n{'='*50}")
-    print(f"📊 RESULTS")
+    print(f"Results RESULTS")
     print(f"{'='*50}")
-    print(f"✅ Conflicts: {conflicts}")
-    print(f"🎨 Colors used: {len(set(color_assignment))} out of {n_colors}")
-    print(f"📈 Distribution: {color_counts}")
-    print(f"⏱️  Success Rate: {100 * (1 - conflicts/len(constraints)):.1f}%")
+    print(f"SUCCESS: Conflicts: {conflicts}")
+    print(f"Solving Colors used: {len(set(color_assignment))} out of {n_colors}")
+    print(f"Distribution Distribution: {color_counts}")
+    print(f"Time  Success Rate: {100 * (1 - conflicts/len(constraints)):.1f}%")
     print(f"{'='*50}\n")
 
-    plt.savefig('graph_coloring_result.png', dpi=300, bbox_inches='tight')
-    print("💾 Visualization saved as 'graph_coloring_result.png'")
+    plt.savefig('tutorials/plots/graph_coloring_result.png', dpi=300, bbox_inches='tight')
+    print("Saved Visualization saved as 'tutorials/plots/graph_coloring_result.png'")
     plt.show()
 
     return G, color_assignment
 
 # Run the visualization
 G, colors = visualize_graph_coloring(n_nodes=20, n_colors=4, density=0.25)
+```
+
+### Verifying the Solution
+
+Always verify your graph coloring solution by checking that no adjacent nodes share the same color:
+
+```python
+from navokoj import solve_qstate, generate_q_graph
+
+n_nodes = 20
+n_colors = 4
+density = 0.25
+seed = 42
+
+constraints = generate_q_graph(n_nodes, density=density, seed=seed)
+color_assignment = solve_qstate(n_nodes, n_colors, constraints, steps=2000, seed=seed)
+
+print(f"Generated {n_nodes} nodes, {len(constraints)} edges")
+print(f"\nSolving Color assignment:")
+for i in range(n_nodes):
+    print(f"  Node {i+1}: Color {color_assignment[i]}")
+
+# Manual verification
+print(f"\nVerifying Verifying each edge:")
+conflicts = []
+for i, (u, v) in enumerate(constraints):
+    color_u = color_assignment[u-1]
+    color_v = color_assignment[v-1]
+    status = "SUCCESS:" if color_u != color_v else "CONFLICT CONFLICT"
+    if color_u == color_v:
+        conflicts.append((u, v, color_u))
+
+print(f"\n{'='*60}")
+if conflicts:
+    print(f"CONFLICT FOUND {len(conflicts)} CONFLICTS:")
+    for u, v, c in conflicts:
+        print(f"   Nodes {u} and {v} both have color {c}")
+else:
+    print(f"SUCCESS: ALL {len(constraints)} CONSTRAINTS SATISFIED!")
+    print(f"   Success rate: 100%")
+print(f"{'='*60}")
+```
+
+**Expected Output:**
+```
+Generated 20 nodes, 40 edges
+
+Solving Color assignment:
+  Node 1: Color 3
+  Node 2: Color 4
+  Node 3: Color 4
+  ...
+
+Verifying Verifying each edge:
+
+============================================================
+SUCCESS: ALL 40 CONSTRAINTS SATISFIED!
+   Success rate: 100%
+============================================================
 ```
 
 ---
@@ -261,7 +320,7 @@ def benchmark_color_counts(n_nodes, density):
     return results
 
 # Run benchmark
-print("🔍 Benchmarking color counts for 20-node graph...")
+print("Verifying Benchmarking color counts for 20-node graph...")
 results = benchmark_color_counts(n_nodes=20, density=0.3)
 ```
 
@@ -278,7 +337,7 @@ n_nodes = 50
 n_colors = 7
 density = 0.2
 
-print(f"🔨 Generating {n_nodes}-node graph...")
+print(f"Generating Generating {n_nodes}-node graph...")
 constraints = generate_q_graph(n_nodes, density=density)
 
 # Create NetworkX graph
@@ -287,14 +346,14 @@ G.add_nodes_from(range(n_nodes))
 for (u, v) in constraints:
     G.add_edge(u-1, v-1)
 
-print(f"🎨 Solving {n_colors}-coloring problem...")
+print(f"Solving Solving {n_colors}-coloring problem...")
 color_assignment = solve_qstate(n_nodes, n_colors, constraints, steps=2000)
 
 # Verify
 conflicts = sum(1 for (u, v) in constraints
                if color_assignment[u-1] == color_assignment[v-1])
 
-print(f"\n✅ Results:")
+print(f"\nSUCCESS: Results:")
 print(f"   Conflicts: {conflicts} / {len(constraints)}")
 print(f"   Success rate: {100 * (1 - conflicts/len(constraints)):.1f}%")
 print(f"   Colors used: {len(set(color_assignment))}")
@@ -318,7 +377,7 @@ ax.set_title(f'Large Graph Coloring: {n_nodes} nodes, {n_colors} colors\n'
              fontsize=14, fontweight='bold')
 ax.axis('off')
 plt.tight_layout()
-plt.savefig('large_graph_coloring.png', dpi=300, bbox_inches='tight')
+plt.savefig('tutorials/plots/large_graph_coloring.png', dpi=300, bbox_inches='tight')
 plt.show()
 ```
 
@@ -375,8 +434,8 @@ def trace_energy_convergence(n_nodes, n_colors, density, max_steps=2000):
                 arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
 
     plt.tight_layout()
-    plt.savefig('energy_convergence.png', dpi=300, bbox_inches='tight')
-    print("\n💾 Convergence plot saved as 'energy_convergence.png'")
+    plt.savefig('tutorials/plots/energy_convergence.png', dpi=300, bbox_inches='tight')
+    print("\nSaved Convergence plot saved as 'tutorials/plots/energy_convergence.png'")
     plt.show()
 
     return steps_history, energy_history
@@ -477,4 +536,4 @@ nx.draw(G, pos, edge_color='black', width=2)
 
 ---
 
-*Happy coloring! 🎨*
+*Happy coloring! Solving*
