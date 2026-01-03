@@ -4,7 +4,7 @@
 
 [![Status](https://img.shields.io/badge/status-research_preview-yellow)]() [![Python](https://img.shields.io/badge/python-3.7%2B-blue)]()
 
-**This is not just a SAT solver. This is the executable version of [The Arithmetic Manifold](manifold.md) theory.**
+**This is not just a SAT solver. This is the executable version of [The Arithmetic Manifold](https://scribe.rip/the-arithmetic-manifold-why-the-next-agi-will-think-in-geometric-operators-not-tokens-a2798c556b7b) theory.**
 
 
 **TL;DR**: Treat SAT, scheduling, and graph coloring as energy landscapes. Use gradient descent + adiabatic cooling instead of backtracking. Gets 99%+ success on problems up to 100 variables in seconds.
@@ -78,7 +78,7 @@ python demo.py --benchmark
 
 ### This is the Arithmetic Manifold, Operationalized
 
-The [Arithmetic Manifold manifesto](manifold.md) argues that AGI will emerge from **geometric operators, not tokens**. Navokoj is the first code that makes this concrete:
+The [Arithmetic Manifold manifesto](https://scribe.rip/the-arithmetic-manifold-why-the-next-agi-will-think-in-geometric-operators-not-tokens-a2798c556b7b) argues that AGI will emerge from **geometric operators, not tokens**. Navokoj is the first code that makes this concrete:
 
 - **Operators as Neurons**: Each constraint is a *first-class operator* with unique prime-weighted spectral signature
 - **Manifold as State Space**: Continuous probabilities/times/potentials = points on high-dimensional geometric landscape  

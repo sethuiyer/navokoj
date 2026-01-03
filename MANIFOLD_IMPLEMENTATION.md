@@ -6,7 +6,7 @@
 
 ## The Bridge: From Manifesto to Code
 
-The [Arithmetic Manifold](manifold.md) manifesto proposes that AGI will emerge as a "self-organizing dynamical system — a living partial differential equation evolving on a vast, intricate landscape of meaning."
+The [Arithmetic Manifold](https://scribe.rip/the-arithmetic-manifold-why-the-next-agi-will-think-in-geometric-operators-not-tokens-a2798c556b7b) manifesto proposes that AGI will emerge as a "self-organizing dynamical system — a living partial differential equation evolving on a vast, intricate landscape of meaning."
 
 **Navokoj is the first concrete implementation of this vision** - operationalizing the four pillars for the domain of constraint satisfaction problems (SAT, scheduling, graph coloring).
 
@@ -293,7 +293,7 @@ The manifold isn't just philosophy - it's computable. The gap between continuous
 
 ## References
 
-1. **S. Iyer**, "The Arithmetic Manifold" (manifold.md) - The original manifesto
+1. **S. Iyer**, "The Arithmetic Manifold" - The original manifesto: https://scribe.rip/the-arithmetic-manifold-why-the-next-agi-will-think-in-geometric-operators-not-tokens-a2798c556b7b
 2. **Amari, S.I.** - Information Geometry (natural gradient)
 3. **LeCun, Y.** - Energy-Based Models (foundational inspiration)
 4. **Connes, A.** - Non-commutative Geometry (spectral triples)
