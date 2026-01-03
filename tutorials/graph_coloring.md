@@ -619,6 +619,61 @@ plt.show()
 
 **Figure 3: Large-scale graph coloring (50 nodes)**
 
+### Dense Graphs
+
+Dense graphs (high edge density) can be challenging but often perform well:
+
+```python
+from navokoj import solve_qstate, generate_q_graph
+import matplotlib.pyplot as plt
+import networkx as nx
+
+n_nodes = 19
+n_colors = 7
+density = 0.70  # 70% of possible edges
+
+constraints = generate_q_graph(n_nodes, density=density, seed=42)
+assignment = solve_qstate(n_nodes, n_colors, constraints, steps=2000, seed=42)
+
+# Build graph
+G = nx.Graph()
+G.add_nodes_from(range(n_nodes))
+for u, v in constraints:
+    G.add_edge(u-1, v-1)
+
+# Visualize
+fig, ax = plt.subplots(figsize=(12, 10))
+color_map = plt.cm.Set3(np.linspace(0, 1, n_colors))
+node_colors = [color_map[assignment[i]-1] for i in range(n_nodes)]
+
+pos = nx.spring_layout(G, seed=42)
+nx.draw(G, pos, node_color=node_colors, with_labels=True,
+        node_size=400, font_size=10, font_weight='bold',
+        edge_color='lightgray', width=1.5, ax=ax)
+
+conflicts = sum(1 for u, v in constraints if assignment[u-1] == assignment[v-1])
+success = 100 * (1 - conflicts/len(constraints))
+
+ax.set_title(f'{n_nodes}-Node Dense Graph (density={density:.2f})\n'
+             f'Edges: {len(constraints)}, Success: {success:.1f}%',
+             fontsize=12, fontweight='bold')
+ax.axis('off')
+plt.tight_layout()
+plt.savefig('tutorials/plots/dense_graph.png', dpi=300)
+plt.show()
+```
+
+**Figure 4: Dense graph coloring (19 nodes, 125 edges, 70% density)**
+
+**Output**
+```
+Nodes: 19
+Edges: 125
+Density: 0.70
+Conflicts: 1/125
+Success rate: 99.2%
+```
+
 ---
 
 ## Troubleshooting
