@@ -11,6 +11,7 @@ This tutorial demonstrates how to solve graph coloring problems using the Navoko
 5. [Visualization](#visualization)
 6. [Verification](#verification)
 7. [Performance Analysis](#performance-analysis)
+8. [Real-World Applications](#real-world-applications)
 
 ---
 
@@ -675,6 +676,91 @@ Density: 0.70
 Conflicts: 1/125
 Success rate: 99.2%
 ```
+
+---
+
+## Real-World Applications
+
+### Quantum Computing: Qubit Mapping
+
+Graph coloring directly applies to quantum computing for mapping logical qubits to physical qubits.
+
+**Problem**: Quantum processors have limited connectivity. Logical qubits that interact must be mapped to adjacent physical qubits.
+
+```python
+from navokoj import solve_qstate
+import networkx as nx
+import matplotlib.pyplot as plt
+
+# Example: IBM Quantum 5-qubit processor topology
+# Physical qubits and their connections
+coupling_map = [
+    (0, 1), (1, 2), (2, 3), (3, 4),  # Linear chain
+    (0, 4),                          # Loop closure
+]
+
+# Logical circuit requiring 3 qubits with specific interactions
+# Qubit 0 and 1 interact frequently, as do 1 and 2, etc.
+logical_interactions = [
+    (0, 1), (1, 2), (0, 2),  # All-to-all interaction
+]
+
+# Map 3 logical qubits to 5 physical qubits
+n_physical_qubits = 5
+n_logical_qubits = 3
+
+# Use coupling map as constraints (1-indexed for solve_qstate)
+coupling_constraints = [(u+1, v+1) for u, v in coupling_map]
+
+# Find 3 physical qubits with good connectivity
+mapping = solve_qstate(n_physical_qubits, n_logical_qubits,
+                      coupling_constraints, steps=2000, seed=42)
+
+print("Physical qubit assignments:")
+for logical_qubit in range(n_logical_qubits):
+    physical_qubit = mapping[logical_qubit]
+    print(f"  Logical qubit {logical_qubit} -> Physical qubit {physical_qubit-1}")
+
+# Verify connectivity
+print("\nConnectivity check:")
+for u, v in logical_interactions:
+    phys_u = mapping[u] - 1
+    phys_v = mapping[v] - 1
+    connected = (phys_u, phys_v) in coupling_map or (phys_v, phys_u) in coupling_map
+    status = "CONNECTED" if connected else "NOT CONNECTED - needs SWAP"
+    print(f"  L{u} (P{phys_u}) <-> L{v} (P{phys_v}): {status}")
+```
+
+**Output**
+```
+Physical qubit assignments:
+  Logical qubit 0 -> Physical qubit 0
+  Logical qubit 1 -> Physical qubit 1
+  Logical qubit 2 -> Physical qubit 2
+
+Connectivity check:
+  L0 (P0) <-> L1 (P1): CONNECTED
+  L1 (P1) <-> L2 (P2): CONNECTED
+  L0 (P0) <-> L2 (P2): NOT CONNECTED - needs SWAP
+```
+
+### Other Applications
+
+**VLSI Design**
+- Module placement with adjacency constraints
+- Graph coloring on conflict graphs
+
+**Register Allocation**
+- Variables to machine registers
+- Interference graph coloring
+
+**Network Design**
+- Frequency assignment to avoid interference
+- Channel allocation in cellular networks
+
+**Scheduling**
+- Task scheduling with resource constraints
+- Course timetabling
 
 ---
 
