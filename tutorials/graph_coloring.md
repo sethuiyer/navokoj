@@ -663,6 +663,8 @@ plt.savefig('tutorials/plots/dense_graph.png', dpi=300)
 plt.show()
 ```
 
+![Dense graph coloring](plots/dense_graph.png)
+
 **Figure 4: Dense graph coloring (19 nodes, 125 edges, 70% density)**
 
 **Output**
