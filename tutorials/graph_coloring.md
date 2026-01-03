@@ -681,38 +681,53 @@ Success rate: 99.2%
 
 ## Real-World Applications
 
-### Quantum Computing: Qubit Mapping
+### When Graph Coloring Works
 
-Graph coloring directly applies to quantum computing for mapping logical qubits to physical qubits.
+**Register Allocation**
+- Variables to machine registers
+- Interference graph coloring
+- Each variable gets unique register if it conflicts with others
+
+**VLSI Design**
+- Module placement with adjacency constraints
+- Track assignment in PCB routing
+
+**Network Design**
+- Frequency assignment to avoid interference
+- Channel allocation in cellular networks
+- Graph coloring on interference graphs
+
+**Scheduling**
+- Course timetabling (exams with overlapping students)
+- Meeting room allocation
+- Task scheduling with resource conflicts
+
+### When Graph Coloring Doesn't Work
+
+**Quantum Computing: Qubit Mapping** (This is NOT graph coloring)
 
 **Problem**: Quantum processors have limited connectivity. Logical qubits that interact must be mapped to adjacent physical qubits.
 
+**Why graph coloring fails**: Qubit mapping requires:
+1. Each logical qubit → UNIQUE physical qubit (injection)
+2. Interacting logical qubits → ADJACENT physical qubits (subgraph isomorphism)
+
+This is **graph embedding**, not graph coloring.
+
 ```python
 from navokoj import solve_qstate
-import networkx as nx
-import matplotlib.pyplot as plt
 
-# Example: IBM Quantum 5-qubit processor topology
-# Physical qubits and their connections
+# IBM Quantum 5-qubit processor topology
 coupling_map = [
     (0, 1), (1, 2), (2, 3), (3, 4),  # Linear chain
     (0, 4),                          # Loop closure
 ]
 
-# Logical circuit requiring 3 qubits with specific interactions
-# Qubit 0 and 1 interact frequently, as do 1 and 2, etc.
-logical_interactions = [
-    (0, 1), (1, 2), (0, 2),  # All-to-all interaction
-]
-
-# Map 3 logical qubits to 5 physical qubits
+# Try to map 3 logical qubits to 5 physical qubits
 n_physical_qubits = 5
 n_logical_qubits = 3
 
-# Use coupling map as constraints (1-indexed for solve_qstate)
 coupling_constraints = [(u+1, v+1) for u, v in coupling_map]
-
-# Find 3 physical qubits with good connectivity
 mapping = solve_qstate(n_physical_qubits, n_logical_qubits,
                       coupling_constraints, steps=2000, seed=42)
 
@@ -720,48 +735,40 @@ print("Physical qubit assignments:")
 for logical_qubit in range(n_logical_qubits):
     physical_qubit = mapping[logical_qubit]
     print(f"  Logical qubit {logical_qubit} -> Physical qubit {physical_qubit-1}")
-
-# Verify connectivity
-print("\nConnectivity check:")
-for u, v in logical_interactions:
-    phys_u = mapping[u] - 1
-    phys_v = mapping[v] - 1
-    connected = (phys_u, phys_v) in coupling_map or (phys_v, phys_u) in coupling_map
-    status = "CONNECTED" if connected else "NOT CONNECTED - needs SWAP"
-    print(f"  L{u} (P{phys_u}) <-> L{v} (P{phys_v}): {status}")
 ```
 
-**Output**
+**Actual Output**
 ```
 Physical qubit assignments:
   Logical qubit 0 -> Physical qubit 0
   Logical qubit 1 -> Physical qubit 1
-  Logical qubit 2 -> Physical qubit 2
-
-Connectivity check:
-  L0 (P0) <-> L1 (P1): CONNECTED
-  L1 (P1) <-> L2 (P2): CONNECTED
-  L0 (P0) <-> L2 (P2): NOT CONNECTED - needs SWAP
+  Logical qubit 2 -> Physical qubit 0  # CONFLICT with L0!
 ```
+
+**Problem**: L0 and L2 both map to P0. Graph coloring ensures adjacent nodes have *different colors*, but doesn't ensure *unique assignment* (each logical qubit needs its own physical qubit).
+
+**Correct approach**: This requires:
+- Graph embedding algorithms
+- Subgraph isomorphism (NP-hard)
+- Specialized tools like Qiskit's transpiler or t|ket⟩
+
+**Key Insight**: Graph coloring solves constraint satisfaction where *adjacent nodes must differ*. Qubit mapping needs *unique injection with preserved adjacency* - a fundamentally different problem.
 
 ### Other Applications
 
-**VLSI Design**
-- Module placement with adjacency constraints
-- Graph coloring on conflict graphs
+**These ARE graph coloring problems:**
+- **Frequency Assignment**: Radio stations interfere if nearby → different frequencies
+- **Register Allocation**: Variables interfere if live simultaneously → different registers
+- **Sudoku**: Same number can't appear twice in row/col/box → graph coloring
+- **Map Coloring**: Adjacent regions need different colors
 
-**Register Allocation**
-- Variables to machine registers
-- Interference graph coloring
+**These are NOT graph coloring:**
+- **Qubit Mapping**: Graph embedding problem
+- **Graph Partitioning**: Divide graph into balanced parts
+- **Network Flow**: Maximize flow through edges
+- **Shortest Path**: Find optimal route
 
-**Network Design**
-- Frequency assignment to avoid interference
-- Channel allocation in cellular networks
-
-**Scheduling**
-- Task scheduling with resource constraints
-- Course timetabling
-
+---
 ---
 
 ## Troubleshooting
