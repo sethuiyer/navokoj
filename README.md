@@ -76,7 +76,8 @@ solution = [int(val > 0.5) for val in x]  # Discrete final state
 
 ## Open Source vs Production API
 
-This repository contains the **open-source research implementation**—a proof-of-concept in Python that demonstrates core principles.
+This repository contains the **open-source research implementation**—a proof-of-concept in Python that demonstrates core principles. 
+The Production API is at https://navokoj.shunyabar.foo/docs/
 
 For production use, see **ShunyaBar API** ([Zenodo](https://zenodo.org/records/18096758)):
 - **Free Tier**: Up to 5,000 variables, 35,000 clauses
