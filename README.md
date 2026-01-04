@@ -26,7 +26,7 @@
 
 ## What is Navokoj?
 
-Navokoj is a revolutionary SAT solver that reimagines constraint satisfaction as geometric flow. Instead of brute-force search or pure stochastic methods, it treats each constraint as a physical object with unique mass, then cools the system from chaos to order.
+Navokoj is a new SAT/max-SAT/max-UNSAT solver that reimagines constraint satisfaction as geometric flow. Instead of brute-force search or pure stochastic methods, it treats each constraint as a physical object with unique mass, then cools the system from chaos to order.
 
 **Core Principle**: Discrete problems → Continuous relaxation → Gradient flow → Discrete solution.
 
