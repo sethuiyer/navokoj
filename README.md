@@ -6,6 +6,7 @@
 
 **The Arithmetic Manifold, operationalized.** Solve SAT, scheduling, and graph coloring as energy landscapes using gradient descent + adiabatic cooling. Achieves 99%+ success on problems up to 100 variables in seconds.
 
+**NOTE**: This is the proof of concept version. The core solver used to break large scale SAT instances is not open sourced
 ---
 
 ## Table of Contents
